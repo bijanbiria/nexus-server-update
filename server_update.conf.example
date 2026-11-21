@@ -1,0 +1,51 @@
+# /etc/server_update.conf  -  site configuration for server_update.sh
+#
+# Copy to /etc/server_update.conf and edit. The script sources this file as
+# root, so it is ONLY read when it is owned by root and not group/world
+# writable:
+#     sudo install -o root -g root -m 600 server_update.conf.example /etc/server_update.conf
+#
+# Anything set here overrides the CONFIGURATION block at the top of the
+# script, so the script itself can stay identical to the upstream version.
+# Plain shell syntax: VAR='value'. Do not put commands in this file.
+# NEVER commit your real copy of this file to a public repository.
+
+# ---------------------------------------------------------------------------
+# Network zones - one line per zone:
+#   name | Nexus base for OS repos | Nexus base for 3rd-party repos | Nexus base for app repos
+# Each base ends in /repository (the Nexus default). The 4th field may be
+# empty if that zone has no pip/npm/helm Nexus. The same Nexus may be used
+# in fields 2 and 3 (the usual case).
+ZONES='dmz|http://nexus-dmz.corp.local:8081/repository|http://nexus-dmz.corp.local:8081/repository|
+internal|http://nexus.corp.local:8081/repository|http://nexus.corp.local:8081/repository|http://nexus-apps.corp.local:8081/repository'
+
+# A single-zone site only needs one line, e.g.:
+# ZONES='default|https://nexus.corp.local/repository|https://nexus.corp.local/repository|https://nexus.corp.local/repository'
+
+# ---------------------------------------------------------------------------
+# Retired Nexus servers that may still appear in old repo files (host:port,
+# space separated). Leave empty if you never migrated from another Nexus.
+NX_EXTRA_HOSTS=""
+
+# Repository names on the retired Nexus that were core OS repos (globs).
+OLD_CORE_NAMES=""
+
+# Retired repo name -> new repo | upstream paths ("-" = repo root).
+# $MAJOR / $ARCH are expanded by the script - keep the single quotes.
+OLD_MAP=''
+
+# ---------------------------------------------------------------------------
+# Access gate (optional). Leave PW_HASH="REPLACE_ME" to disable it.
+# Create a hash:   printf '%s' "MY-SALT:MY-PASSWORD" | sha256sum
+PW_SALT="CHANGE-ME-SALT"
+PW_HASH="REPLACE_ME"
+
+# ---------------------------------------------------------------------------
+# Optional defaults (all can also be given as environment variables or options)
+# MIN_ROOT_MB=2048
+# MIN_VAR_MB=2048
+# MIN_BOOT_MB=300
+# MIN_TMP_MB=200
+# KEEP_KERNELS=2
+# TIMEOUT=8
+# DOCKER_AGE=90

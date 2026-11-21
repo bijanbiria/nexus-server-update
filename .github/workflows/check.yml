@@ -1,0 +1,29 @@
+name: check
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Bash syntax
+        run: bash -n server_update.sh
+
+      - name: ShellCheck (errors only)
+        run: shellcheck -S error server_update.sh
+
+      - name: Functions load without running main
+        run: NX_SOURCE_ONLY=1 bash -c '. ./server_update.sh && type find_repo >/dev/null'
+
+      - name: No site data committed
+        run: |
+          if grep -nE '\b(10\.[0-9]+|172\.(1[6-9]|2[0-9]|3[01])|192\.168)\.[0-9]+\.[0-9]+' server_update.sh; then
+            echo "private IP address found in server_update.sh"; exit 1
+          fi
+          if grep -nE 'PW_HASH="[0-9a-f]{64}"' server_update.sh; then
+            echo "real password hash found in server_update.sh"; exit 1
+          fi

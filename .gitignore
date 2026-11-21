@@ -1,0 +1,11 @@
+# real site configuration - never commit
+server_update.conf
+*.conf
+!server_update.conf.example
+# compiled (shc) binaries and build output
+server_update
+*.x.c
+# logs / local test output
+*.log
+*.json
+.DS_Store
